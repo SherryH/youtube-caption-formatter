@@ -1,0 +1,23 @@
+{
+  "name": "youtube-caption-formatter",
+  "version": "1.0.0",
+  "description": "This project provides a simple script for formatting the `vtt` subtitle files to be readable html.",
+  "main": "caption_quickstart.js",
+  "dependencies": {
+    "promise": "^8.0.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SherryH/youtube-caption-formatter.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SherryH/youtube-caption-formatter/issues"
+  },
+  "homepage": "https://github.com/SherryH/youtube-caption-formatter#readme"
+}

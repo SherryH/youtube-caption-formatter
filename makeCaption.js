@@ -6,21 +6,21 @@
 // perform Regex to format the content
 // HTML template: format the content to be read on html
 
-var fs = require('fs');
-var path = require('path');
-var Promise = require('promise');
+var fs = require("fs");
+var path = require("path");
+var Promise = require("promise");
 
 // var readFileAsync = Promise.promisify(fs.readFile);
 
-var inputDir = path.join(__dirname, '/captionInput');
-var outputDir = path.join(__dirname, '/captionOutput');
+var inputDir = path.join(__dirname, "/captionInput");
+var outputDir = path.join(__dirname, "/captionOutput");
 
 var currentFile = null;
 var outputFile = null;
 
 fs.readdir(inputDir, function(err, files) {
   if (err) console.log(err);
-  console.log('files in dir', files);
+  console.log("files in dir", files);
   // read the first file in the input dir
   currentFile = path.join(inputDir, files[0]);
   outputFile = path.join(outputDir, `${files[0]}.html`);
@@ -28,17 +28,18 @@ fs.readdir(inputDir, function(err, files) {
   // read file content
   readFileAsync(currentFile)
     .then(function(fileContent) {
-      var contentArr = fileContent.toString().split('\n');
+      var contentArr = fileContent.toString().split("\n");
       return contentArr.map(function(line, index) {
         var isEven = index % 2 === 0;
         var istimeline = line.search(/-->/g) !== -1;
-        var isCaptionLine = line.search(/<\/?[\w\.?:?]+>/g) !== -1;
+        // var isCaptionLine = line.search(/<\/?[\w\.?:?]+>/g) !== -1;
+        var isCaptionLine = line.search(/-->/g) === -1;
         if (istimeline) {
-          return line.replace(/-->.*/g, '');
+          return line.replace(/-->.*/g, "");
         } else if (isCaptionLine) {
-          return line.replace(/<\/?[\w\.?:?]+>/g, '');
+          return line.replace(/<\/?[\w\.?:?]+>/g, "");
         } else {
-          return '';
+          return "";
         }
       });
     })
@@ -50,7 +51,7 @@ fs.readdir(inputDir, function(err, files) {
           return /\d{2}:\d{2}:\d{2}/.test(line);
         };
         var isCaptionLine = line => {
-          return !istimeline(line) && line !== '';
+          return !istimeline(line) && line !== "";
         };
         if (istimeline(line)) {
           // find the next timeline and remove it
@@ -60,14 +61,14 @@ fs.readdir(inputDir, function(err, files) {
             nextInd < rawContent.length
           ) {
             nextInd++;
-            console.log('nextInd', nextInd, rawContent[nextInd]);
+            console.log("nextInd", nextInd, rawContent[nextInd]);
           }
           // console.log(
           //   'istimeline',
           //   istimeline(rawContent[nextInd]),
           //   rawContent[nextInd]
           // );
-          if (istimeline(rawContent[nextInd])) rawContent[nextInd] = '';
+          if (istimeline(rawContent[nextInd])) rawContent[nextInd] = "";
           return renderTime(line);
         }
         if (isCaptionLine(line)) {
@@ -79,13 +80,13 @@ fs.readdir(inputDir, function(err, files) {
             nextInd++;
           }
           if (isCaptionLine(rawContent[nextInd])) {
-            line = line.concat(' ', rawContent[nextInd]);
+            line = line.concat(" ", rawContent[nextInd]);
             // console.log(
             //   'isCaption',
             //   isCaptionLine(rawContent[nextInd]),
             //   rawContent[nextInd]
             // );
-            rawContent[nextInd] = '';
+            rawContent[nextInd] = "";
             return renderCaption(line);
           }
         }
@@ -96,11 +97,11 @@ fs.readdir(inputDir, function(err, files) {
       wStream = fs.createWriteStream(outputFile);
       wStream.write(createHTMLBoilerplate());
       formattedContent.forEach(function(content) {
-        if (content !== '') wStream.write(content);
+        if (content !== "") wStream.write(content);
       });
-      wStream.write('</body>\n</html>');
-      wStream.on('finish', function() {
-        console.log('all data wrote to file');
+      wStream.write("</body>\n</html>");
+      wStream.on("finish", function() {
+        console.log("all data wrote to file");
       });
     })
     .catch(function(err) {
